@@ -1,4 +1,5 @@
 import "./style.scss";
+import applePath from "./img/apple.svg";
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
@@ -13,21 +14,30 @@ let apple = [5, 5];
 let speed = 0;
 let score = 0;
 
+/*************** Drawing functions ***************/
+
 const drawMap = () => {
   ctx.fillStyle = "#2c3e50";
   ctx.fillRect(0, 0, 800, 800);
 };
 
 const drawSnake = () => {
-  ctx.fillStyle = "#27ae60";
   for (let body of snake) {
-    ctx.fillRect(body[0] * gridElem, body[1] * gridElem, gridElem, gridElem);
+    if (body === snake[0]) {
+      ctx.fillStyle = "#27ae60";
+      ctx.fillRect(body[0] * gridElem, body[1] * gridElem, gridElem, gridElem);
+    } else {
+      ctx.fillStyle = "#2ecc71";
+      ctx.fillRect(body[0] * gridElem, body[1] * gridElem, gridElem, gridElem);
+    }
   }
 };
 
+const appleImage = new Image();
+appleImage.src = applePath;
+
 const drawApple = () => {
-  ctx.fillStyle = "#e74c3c";
-  ctx.fillRect(apple[0] * gridElem, apple[1] * gridElem, gridElem, gridElem);
+  ctx.drawImage(appleImage, apple[0] * gridElem, apple[1] * gridElem, 40, 40);
 };
 
 const drawScore = () => {
@@ -36,6 +46,21 @@ const drawScore = () => {
   ctx.textBaseline = "top";
   ctx.fillText(score, gridElem, gridElem);
 };
+
+function drawGameOver() {
+  // ctx.fillStyle = "#2c3e50";
+  // ctx.fillRect(0, 0, 800, 800);
+  ctx.style = "ecf0f1";
+  ctx.textAlign = "center";
+  ctx.font = "bold 80px Consolas";
+  ctx.fillText("Perdu !", 400, 200);
+  ctx.font = "bold 65px Consolas";
+  ctx.fillText(`Votre score est: ${score}`, 400, 400);
+  ctx.font = "30px Consolas";
+  ctx.fillText("Tapez sur F5 pour rejouer", 400, 680);
+}
+
+/*************** Game managing functions ***************/
 
 let direction = "e";
 window.addEventListener("keydown", handleKeyDown);
@@ -70,9 +95,9 @@ function move() {
 
     setTimeout(() => {
       requestAnimationFrame(move);
-    }, 800 - speed);
+    }, 600 - speed);
   } else {
-    alert(`Perdu ! Votre score est: ${score}`);
+    drawGameOver();
   }
 }
 
@@ -108,7 +133,7 @@ function updateSnakePosition() {
 
 function generateApple() {
   score++;
-  speed = score * 15;
+  speed = score * 20;
   const [x, y] = [
     Math.trunc(Math.random() * 19),
     Math.trunc(Math.random() * 19),
@@ -139,4 +164,6 @@ function gameOver() {
   }
 }
 
-requestAnimationFrame(move);
+appleImage.onload = () => {
+  requestAnimationFrame(move);
+};
