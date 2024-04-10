@@ -95,7 +95,7 @@ function move() {
 
     setTimeout(() => {
       requestAnimationFrame(move);
-    }, 600 - speed);
+    }, 500 - speed);
   } else {
     drawGameOver();
   }
